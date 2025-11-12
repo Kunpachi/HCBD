@@ -1,0 +1,61 @@
+
+/* resources/css/app.css */
+/* @import 'tailwindcss'; */
+/* 1) CSS Vendor Vuexy/Bootstrap */
+@import "../vendor/vendor/css/core.css";
+@import "../vendor/vendor/css/theme-default.css";
+/* @import "../vendor/vendor/css/demo.css"; */
+
+/* Icon/fonts */
+@import "../vendor/vendor/fonts/tabler-icons.css";
+@import "../vendor/vendor/fonts/fontawesome.css";
+@import "../vendor/vendor/fonts/flag-icons.css";
+@import "../vendor/vendor/libs/select2/select2.css";
+
+/* 2) Tailwind (preflight OFF di config) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3) Fix overlay kalau menutup navbar (klik tidak kena) */
+.layout-overlay { pointer-events: none; opacity: 0; }
+
+/* Tambahkan di akhir file, setelah @tailwind utilities */
+
+/* 1) Hilangkan border/nav-line default agar tidak ada garis hitam */
+.layout-navbar.navbar {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 2) Pastikan overlay tidak memblokir klik dan tidak terlihat */
+.layout-overlay { pointer-events: none; opacity: 0; }
+
+/* 3) Input di navbar: paksa hilangkan border/outline Bootstrap */
+#layout-navbar input[type="text"],
+#layout-navbar .form-control {
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+/* 4) Placeholder dan ikon warna abu lembut */
+#layout-navbar input::placeholder { color: #9CA3AF; }   /* gray-400 */
+#layout-navbar i { color: #6B7280; }                    /* gray-500 */
+
+/* 5) Floating shadow fallback jika arbitrary value Tailwind tidak aktif */
+[data-navbar-floating="true"] .tw-shadow-\[0_4px_16px_-4px_rgba\(0\,0\,0\,0\.08\)\] {
+  box-shadow: 0 4px 16px -4px rgba(0,0,0,0.08);
+}
+
+/* 6) Jaga z-index navbar di atas konten */
+#layout-navbar { z-index: 10; }
+
+/* 7) Backdrop ringan sesuai tampilan Vuexy */
+body.layout-content-navbar .layout-page .layout-navbar {
+  backdrop-filter: blur(6px);
+}
+
+/* 8) Hindari garis top/bottom akibat elemen lain overlap */
+.layout-page { overflow-x: hidden; }
