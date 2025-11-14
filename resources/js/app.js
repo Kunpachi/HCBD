@@ -119,6 +119,8 @@ import '../vendor/vendor/js/template-customizer.js'
 //// ===== Laravel's bootstrap.js (Axios/Echo), bukan Bootstrap CSS/JS =====
 import './bootstrap.js'
 
+import './hr-box.js';
+
 //// ===== Chart components (opsional) =====
 import './charts/latest-statistics.js'
 import './charts/devices-donut.js'
