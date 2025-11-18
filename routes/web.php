@@ -4,12 +4,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HRTablesController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+// Route::get('/total', [HRTablesController::class, 'total'])->name('total');
+//     Route::get('/gender', [HRTablesController::class, 'gender'])->name('gender');
+//     Route::get('/gap', [HRTablesController::class, 'gap'])->name('gap');
+//     Route::get('/generation', [HRTablesController::class, 'generation'])->name('generation');
 
 
 // Route::get('/', fn() => redirect()->route('users.index'))->name('dashboard');
@@ -24,6 +30,14 @@ Route::middleware('auth')->group(function () {
         request()->session()->regenerateToken();
         return redirect()->route('login');
     })->name('logout');
+});
+
+Route::prefix('hr')->name('hr.')->group(function () {
+    Route::get('/total', [HRTablesController::class, 'total'])->name('total');
+    Route::get('/gender', [HRTablesController::class, 'gender'])->name('gender');
+    Route::get('/gap', [HRTablesController::class, 'gap'])->name('gap');
+    Route::get('/generation', [HRTablesController::class, 'generation'])->name('generation');
+    Route::get('/education', [HRTablesController::class, 'education'])->name('education');
 });
 
 

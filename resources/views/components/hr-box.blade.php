@@ -28,11 +28,12 @@
     $chipIcon = $it['chipIcon']?? 'ti ti-dots';
     $chipBg   = $it['chipBg']  ?? 'tw-bg-gray-100';
     $chipText = $it['chipText']?? 'tw-text-gray-600';
+    $chipHref = $it['chipHref']?? null;
 
     $pctNum  = is_string($percent) ? (int) preg_replace('/[^\d]/','', $percent) : (is_numeric($percent) ? (int)$percent : null);
     if ($pctNum !== null) $pctNum = max(0, min(100,$pctNum));
 
-    return compact('label','value','percent','hint','chipIcon','chipBg','chipText','pctNum');
+    return compact('label','value','percent','hint','chipIcon','chipBg','chipText','pctNum','chipHref');
   });
 
   $layoutClass = $center ? 'tw-items-center' : 'tw-items-start';
@@ -61,14 +62,12 @@
   $gridColsClass = match($itemsPerRow){
     2 => 'sm:tw-grid-cols-2',
     3 => 'sm:tw-grid-cols-3',
+    4 => 'sm:tw-grid-cols-4',
     default => 'sm:tw-grid-cols-1'
   };
 @endphp
 
-<div id="{{ $boxId }}"
-     data-hr-box
-     data-period="{{ $period }}"
-     class="{{ $containerBase }} {{ $containerSkin }} {{ $class }}">
+<div id="{{ $boxId }}" class="{{ $containerBase }} {{ $containerSkin }} {{ $class }}">
   <div class="tw-px-5 tw-pt-5 tw-pb-2">
     <div class="tw-flex tw-items-start tw-justify-between tw-gap-4">
       <div>
@@ -79,85 +78,58 @@
           <div class="tw-text-xs {{ $labelTextClass }}">{{ $subtitle }}</div>
         @endif
       </div>
-      <div class="tw-flex tw-items-center tw-gap-2">
-        {{-- <div class="tw-text-[11px] {{ $labelTextClass }}">{{ $updatedLabel }}</div> --}}
-        <div class="tw-hidden sm:tw-flex tw-items-center tw-gap-1 hr-box-periods">
-          {{-- @foreach($periodOptions as $key => $label)
-            <button type="button"
-                    class="hr-pill {{ $period === $key ? 'is-active' : '' }}"
-                    data-period="{{ $key }}"
-                    aria-pressed="{{ $period === $key ? 'true' : 'false' }}">
-              {{ $label }}
-            </button>
-          @endforeach --}}
-        </div>
-      </div>
+      {{-- <div class="tw-text-[11px] {{ $labelTextClass }}">{{ $updatedLabel }}</div> --}}
     </div>
+
+    {{-- @if(is_array($meta) && count($meta))
+      <div class="tw-flex tw-flex-wrap tw-gap-2 tw-mt-3">
+        @foreach($meta as $m)
+          <div class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-full tw-border tw-border-gray-200 tw-bg-gray-50 tw-px-2.5 tw-py-1">
+            <span class="tw-text-[11px] tw-font-semibold tw-text-gray-700">{{ $m['label'] ?? 'META' }}:</span>
+            <span class="tw-text-[11px] tw-font-semibold tw-text-gray-900">{{ $m['value'] ?? '-' }}</span>
+            @if(!empty($m['percent']))
+              <span class="tw-text-[11px] tw-text-gray-500">{{ $m['percent'] }}</span>
+            @endif
+          </div>
+        @endforeach
+      </div>
+    @endif --}}
   </div>
 
   <div class="tw-px-5 tw-pb-5">
     @if($variant === 'chip')
-      @if($useGrid)
-        <div class="tw-grid tw-gap-4 {{ $gridColsClass }}">
-          @foreach($normalized as $row)
-            <div class="tw-flex tw-items-center tw-gap-4">
+      <div class="{{ $useGrid ? 'tw-grid '.$gridColsClass : 'tw-flex tw-flex-col' }} tw-gap-4">
+        @foreach($normalized as $row)
+          <div class="tw-flex tw-items-center tw-gap-4">
+            @if($row['chipHref'])
+              <a href="{{ $row['chipHref'] }}" class="tw-w-11 tw-h-11 tw-rounded-xl tw-flex tw-items-center tw-justify-center {{ $row['chipBg'] }} hover:tw-scale-[1.02] tw-transition" title="Lihat tabel {{ $row['label'] }}">
+                <i class="{{ $row['chipIcon'] }} tw-text-xl {{ $row['chipText'] }}"></i>
+              </a>
+            @else
               <div class="tw-w-11 tw-h-11 tw-rounded-xl tw-flex tw-items-center tw-justify-center {{ $row['chipBg'] }}">
                 <i class="{{ $row['chipIcon'] }} tw-text-xl {{ $row['chipText'] }}"></i>
               </div>
-              <div class="tw-flex tw-flex-col tw-leading-tight">
-                <div class="tw-text-lg tw-font-semibold {{ $valueTextClass }}">
-                  {{ $row['value'] }}
-                  @if($showPercent && $row['percent'])
-                    <span class="tw-text-xs tw-font-medium tw-ml-2 {{ $labelTextClass }}">{{ $row['percent'] }}</span>
-                  @endif
-                </div>
-                <div class="tw-text-xs {{ $labelTextClass }}">{{ $row['label'] }}</div>
-                {{-- @if(!is_null($row['pctNum']))
-                  <div class="kpi-progress tw-mt-2"><span style="width: {{ $row['pctNum'] }}%"></span></div>
-                @endif --}}
+            @endif
+
+            <div class="tw-flex tw-flex-col tw-leading-tight">
+              <div class="tw-text-base tw-font-semibold {{ $valueTextClass }}">
+                {{ $row['value'] }}
+                @if($showPercent && $row['percent'])
+                  <span class="tw-text-[11px] tw-font-medium tw-ml-2 {{ $labelTextClass }}">{{ $row['percent'] }}</span>
+                @endif
               </div>
-              @if($row['hint'])
-                <i class="ti ti-info-circle {{ $labelTextClass }} tw-text-sm" data-bs-toggle="tooltip" title="{{ $row['hint'] }}"></i>
-              @endif
+              <div class="tw-text-xs {{ $labelTextClass }}">{{ $row['label'] }}</div>
             </div>
-          @endforeach
-        </div>
-      @else
-        <div class="tw-flex tw-flex-col tw-gap-4">
-          @foreach($normalized as $row)
-            <div class="tw-flex tw-items-center tw-gap-4">
-              <div class="tw-w-11 tw-h-11 tw-rounded-xl tw-flex tw-items-center tw-justify-center {{ $row['chipBg'] }}">
-                <i class="{{ $row['chipIcon'] }} tw-text-xl {{ $row['chipText'] }}"></i>
-              </div>
-              <div class="tw-flex tw-flex-col tw-leading-tight">
-                <div class="tw-text-lg tw-font-semibold {{ $valueTextClass }}">
-                  {{ $row['value'] }}
-                  @if($showPercent && $row['percent'])
-                    <span class="tw-text-xs tw-font-medium tw-ml-2 {{ $labelTextClass }}">{{ $row['percent'] }}</span>
-                  @endif
-                </div>
-                <div class="tw-text-xs {{ $labelTextClass }}">{{ $row['label'] }}</div>
-                {{-- @if(!is_null($row['pctNum']))
-                  <div class="kpi-progress tw-mt-2"><span style="width: {{ $row['pctNum'] }}%"></span></div>
-                @endif --}}
-              </div>
-              @if($row['hint'])
-                <i class="ti ti-info-circle {{ $labelTextClass }} tw-text-sm" data-bs-toggle="tooltip" title="{{ $row['hint'] }}"></i>
-              @endif
-            </div>
-          @endforeach
-        </div>
-      @endif
+          </div>
+        @endforeach
+      </div>
     @else
       <div class="tw-flex tw-flex-col {{ $layoutClass }} tw-gap-3">
         @foreach($normalized as $row)
           <div class="tw-w-full tw-flex {{ $center ? 'tw-justify-center' : 'tw-justify-between' }}">
-            <div class="tw-inline-flex tw-flex-col tw-min-w-[180px] tw-px-4 tw-py-2.5 tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded-md tw-bg-white/80 dark:tw-bg-slate-700/60 hover:tw-border-indigo-500 hover:tw-shadow-sm tw-transition">
+            <div class="tw-inline-flex tw-flex-col tw-min-w-[180px] tw-max-w-full tw-px-4 tw-py-2.5 tw-border tw-border-gray-300 tw-rounded-md tw-bg-white hover:tw-border-indigo-500 hover:tw-shadow-sm tw-transition">
               <div class="tw-flex tw-items-start tw-justify-between tw-gap-2">
                 <span class="tw-text-xs tw-font-medium {{ $labelTextClass }}">{{ $row['label'] }}</span>
-                @if($row['hint'])
-                  <i class="ti ti-info-circle {{ $labelTextClass }} tw-text-xs" data-bs-toggle="tooltip" title="{{ $row['hint'] }}"></i>
-                @endif
               </div>
               <div class="tw-text-base tw-font-semibold {{ $valueTextClass }}">
                 {{ $row['value'] }}
@@ -165,9 +137,6 @@
                   <span class="tw-text-[10px] tw-font-medium tw-ml-1 {{ $labelTextClass }}">{{ $row['percent'] }}</span>
                 @endif
               </div>
-              {{-- @if(!is_null($row['pctNum']))
-                <div class="kpi-progress tw-mt-2"><span style="width: {{ $row['pctNum'] }}%"></span></div>
-              @endif --}}
             </div>
           </div>
         @endforeach

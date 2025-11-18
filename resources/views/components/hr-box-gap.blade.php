@@ -1,21 +1,25 @@
 @props([
-  'title'    => 'Generation',
-  'updatedAt'=> null,
-  'genX'     => 0,
-  'genY'     => 0,
-  'genZ'     => 0,
-  'genXPct'  => '(0%)',
-  'genYPct'  => '(0%)',
-  'genZPct'  => '(0%)',
-  'compact'  => true,    // default compact biar konsisten
-  'class'    => '',
-  'linkBase' => null,    // contoh: route('hr.generation')
+  'title'          => 'GAP',
+  'updatedAt'      => null,
+  'male'           => 0,
+  'female'         => 0,
+  'totalEmployees' => null,     // jika null: denominator = male + female
+  'compact'        => true,
+  'class'          => '',
+  'showHint'       => true,
+  'linkBase'       => null,     // contoh: route('hr.gap')
+  // Jika ingin definisi lain (kebutuhan, pensiun) bisa tambah prop requirementMale dll.
 ])
 
 @php
-  $updatedLabel   = $updatedAt
-    ? (is_string($updatedAt) ? $updatedAt : $updatedAt->diffForHumans())
-    : 'Updated just now';
+  $updatedLabel = $updatedAt
+      ? (is_string($updatedAt) ? $updatedAt : $updatedAt->diffForHumans())
+      : 'Updated just now';
+
+  $denom   = $totalEmployees !== null ? (int)$totalEmployees : ((int)$male + (int)$female);
+  $gap     = abs((int)$male - (int)$female);
+  $gapPctN = $denom > 0 ? round($gap / $denom * 100) : 0;
+  $gapPct  = '(' . $gapPctN . '%)';
 
   $chipSizeClass  = $compact ? 'tw-w-9 tw-h-9 tw-rounded-lg' : 'tw-w-11 tw-h-11 tw-rounded-xl';
   $iconSizeClass  = $compact ? 'tw-text-base' : 'tw-text-lg';
@@ -37,34 +41,31 @@
     <span class="tw-text-[11px] tw-text-gray-500">{{ $updatedLabel }}</span>
   </div>
 
-  <!-- Grid 3 kolom (sama seperti Total Kepegawaian) -->
-  <div class="tw-grid tw-gap-4 sm:tw-grid-cols-3">
+  <div class="tw-grid tw-gap-4 sm:tw-grid-cols-2">
     <div class="tw-flex tw-items-center tw-gap-3">
-      {!! $chip('#genx','tw-bg-rose-100','ti ti-user-exclamation','tw-text-rose-600') !!}
+      {!! $chip('#gap','tw-bg-violet-100','ti ti-arrows-left-right','tw-text-violet-600') !!}
       <div class="tw-flex tw-flex-col tw-leading-tight">
         <div class="{{ $valueTextClass }} tw-font-semibold tw-text-gray-900">
-          {{ $genX }} <span class="tw-text-[11px] tw-font-medium tw-ml-1 tw-text-gray-500">{{ $genXPct }}</span>
+          {{ $gap }}
+          <span class="tw-text-[11px] tw-font-medium tw-ml-1 tw-text-gray-500">{{ $gapPct }}</span>
         </div>
-        <div class="tw-text-[11px] tw-text-gray-500">Gen X</div>
+        <div class="tw-text-[11px] tw-text-gray-500">GAP</div>
       </div>
     </div>
     <div class="tw-flex tw-items-center tw-gap-3">
-      {!! $chip('#geny','tw-bg-slate-200','ti ti-shield-check','tw-text-slate-700') !!}
+      {!! $chip('#gap-percent','tw-bg-fuchsia-100','ti ti-percentage','tw-text-fuchsia-600') !!}
       <div class="tw-flex tw-flex-col tw-leading-tight">
         <div class="{{ $valueTextClass }} tw-font-semibold tw-text-gray-900">
-          {{ $genY }} <span class="tw-text-[11px] tw-font-medium tw-ml-1 tw-text-gray-500">{{ $genYPct }}</span>
+          {{ $gapPctN }} <span class="tw-text-[11px] tw-font-medium tw-ml-1 tw-text-gray-500">(%)</span>
         </div>
-        <div class="tw-text-[11px] tw-text-gray-500">Gen Y</div>
-      </div>
-    </div>
-    <div class="tw-flex tw-items-center tw-gap-3">
-      {!! $chip('#genz','tw-bg-indigo-100','ti ti-flame','tw-text-indigo-600') !!}
-      <div class="tw-flex tw-flex-col tw-leading-tight">
-        <div class="{{ $valueTextClass }} tw-font-semibold tw-text-gray-900">
-          {{ $genZ }} <span class="tw-text-[11px] tw-font-medium tw-ml-1 tw-text-gray-500">{{ $genZPct }}</span>
-        </div>
-        <div class="tw-text-[11px] tw-text-gray-500">Gen Z</div>
+        <div class="tw-text-[11px] tw-text-gray-500">GAP%</div>
       </div>
     </div>
   </div>
+
+  {{-- @if($showHint)
+    <div class="tw-mt-3 tw-text-[10px] tw-text-gray-500">
+      GAP = selisih jumlah Male vs Female. GAP% = GAP / {{ $denom ?: 1 }} × 100.
+    </div>
+  @endif --}}
 </div>

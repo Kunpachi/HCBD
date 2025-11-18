@@ -35,6 +35,13 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        if (!Schema::hasColumn('users','education_level')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('education_level')->nullable()->after('generation');
+                $table->index('education_level');
+            });
+        }
     }
 
     /**

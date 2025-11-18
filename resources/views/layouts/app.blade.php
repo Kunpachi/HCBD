@@ -11,11 +11,17 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
+
+@stack('after-scripts')
+
 <body class="layout-wrapper layout-content-navbar">
 <!-- Layout container -->
 <div class="layout-container">
+  {{-- @include('dashboard-section.talentmap-and-grade') --}}
+  @include('layouts.partials.apexcharts')
+  
     @include('layouts.partials.sidebar')
-
+    
     <!-- Layout page -->
     <div class="layout-page">
         @include('layouts.partials.navbar')
@@ -70,6 +76,8 @@
 
 @stack('scripts')
 <script>
+  
+
 document.addEventListener('DOMContentLoaded', () => {
   // Highlight active link berdasarkan URL
   const current = window.location.pathname;

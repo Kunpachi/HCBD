@@ -18,33 +18,7 @@
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
-        <!-- Dashboards -->
-        {{-- <li class="menu-item">
-            <a href="{{ route('dashboard') }}" class="menu-link">
-                <i class="menu-icon ti ti-smart-home"></i>
-                <div data-i18n="Dashboards">Dashboards</div>
-                <div class="badge bg-danger rounded-pill ms-auto">5</div>
-            </a>
-        </li>
-
-        <li class="menu-item">
-            <a href="{{ route('analytics') }}" class="menu-link">
-                <i class="menu-icon ti ti-chart-bar"></i>
-                <div data-i18n="Analytics">Analytics</div>
-            </a>
-        </li> --}}
-
-        {{-- <li class="menu-item">
-            <a href="{{ route('crm') }}" class="menu-link">
-                <i class="menu-icon ti ti-user-shield"></i>
-                <div data-i18n="CRM">CRM</div>
-            </a>
-        </li> --}}
-
-        <!-- Example group -->
-        {{-- <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Apps & Pages</span>
-        </li> --}}
+        <!-- Dashboards --> 
 
         <li class="menu-item {{ request()->routeIs('users.index') ? 'active' : '' }}">
             <a href="{{ route('users.index') }}" class="menu-link">
@@ -61,15 +35,11 @@
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div>Horizontal (demo)</div>
+                    <a href="{{ route('hr.total') }}" class="menu-link">
+                        <div>Total Kepegawaian</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div>Dark Mode</div>
-                    </a>
-                </li>
+              
             </ul>
         </li>
     </ul>
