@@ -10,18 +10,17 @@
     <title>@yield('title','Human Capital Database')</title>
     @vite(['resources/css/app.css','resources/js/app.js'])
     <meta name="csrf-token" content="{{ csrf_token() }}">
-</head>
 
-@stack('after-scripts')
+    {{-- PENTING: JANGAN tempatkan @stack('after-scripts') di sini.
+         Komponen akan melakukan @push('after-scripts') SETELAH konten dirender.
+         Jika dipanggil di head, hasilnya kosong. --}}
+</head>
 
 <body class="layout-wrapper layout-content-navbar">
 <!-- Layout container -->
 <div class="layout-container">
-  {{-- @include('dashboard-section.talentmap-and-grade') --}}
-  @include('layouts.partials.apexcharts')
-  
     @include('layouts.partials.sidebar')
-    
+
     <!-- Layout page -->
     <div class="layout-page">
         @include('layouts.partials.navbar')
@@ -34,7 +33,6 @@
             </div>
             <!-- /Content -->
 
-            <!-- Footer (opsional) -->
             <footer class="content-footer footer bg-footer-theme">
                 <div class="container-xxl d-flex flex-column flex-md-row flex-wrap justify-content-between py-2">
                     <div class="mb-2 mb-md-0">
@@ -52,7 +50,7 @@
     </div>
     <!-- /Layout page -->
 </div>
-<!-- Overlay (untuk mobile menu) -->
+
 <div class="layout-overlay layout-menu-toggle"></div>
 
 <!-- Quick Search Dialog -->
@@ -73,33 +71,33 @@
     </div>
 </div>
 
-
+{{-- Script utama aplikasi --}}
 @stack('scripts')
-<script>
-  
 
+{{-- Partial ApexCharts + seluruh script chart yang dipush oleh komponen --}}
+@include('layouts.partials.apexcharts')
+@stack('after-scripts')
+
+<script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Highlight active link berdasarkan URL
+  // Highlight active link berdasar URL
   const current = window.location.pathname;
   document.querySelectorAll('#layout-menu a.menu-link').forEach(a => {
     if (a.getAttribute('href') === current) {
       a.classList.add('active');
-      const parent = a.closest('.menu-item');
-      parent?.classList.add('active');
+      a.closest('.menu-item')?.classList.add('active');
     }
   });
 
-  // Quick Search (CTRL+K)
+  // Quick Search
   const dialog = document.getElementById('quickSearchDialog');
   const input = document.getElementById('quickSearchInput');
   const results = document.getElementById('quickSearchResults');
   const closeBtn = document.getElementById('quickSearchClose');
-  const menuLinks = () => Array.from(document.querySelectorAll('#layout-menu a.menu-link'));
 
-  const collectItems = () => {
-    return Array.from(document.querySelectorAll('#layout-menu a.menu-link'))
-      .map(a => ({text: a.textContent.trim(), href: a.getAttribute('href')}));
-  };
+  const collectItems = () => Array.from(
+    document.querySelectorAll('#layout-menu a.menu-link')
+  ).map(a => ({ text: a.textContent.trim(), href: a.getAttribute('href') }));
 
   const renderResults = (q) => {
     const items = collectItems().filter(i => i.text.toLowerCase().includes(q.toLowerCase()));
@@ -108,35 +106,28 @@ document.addEventListener('DOMContentLoaded', () => {
       : `<li class="tw-text-xs tw-text-gray-400 tw-px-2">Tidak ada hasil</li>`;
   };
 
-    function openDialog() {
-        dialog.classList.remove('tw-hidden');
-        dialog.setAttribute('aria-hidden','false');
-        input.focus();
-        input.select();
-        renderResults('');
-    }
-    function closeDialog() {
-        dialog.classList.add('tw-hidden');
-        dialog.setAttribute('aria-hidden','true');
-    }
+  function openDialog() {
+    dialog.classList.remove('tw-hidden');
+    dialog.setAttribute('aria-hidden','false');
+    input.focus();
+    input.select();
+    renderResults('');
+  }
+  function closeDialog() {
+    dialog.classList.add('tw-hidden');
+    dialog.setAttribute('aria-hidden','true');
+  }
 
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
-      dialog.classList.remove('tw-hidden');
-      input.focus();
-      input.select();
-      renderResults('');
+      openDialog();
     }
   });
   document.addEventListener('open-quick-search', () => openDialog());
-
-
   input?.addEventListener('input', () => renderResults(input.value));
-  closeBtn?.addEventListener('click', () => dialog.classList.add('tw-hidden'));
-  dialog?.addEventListener('click', (e) => {
-    if (e.target === dialog) dialog.classList.add('tw-hidden');
-  });
+  closeBtn?.addEventListener('click', closeDialog);
+  dialog?.addEventListener('click', (e) => { if (e.target === dialog) closeDialog(); });
 });
 </script>
 </body>

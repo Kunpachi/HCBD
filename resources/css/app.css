@@ -81,3 +81,54 @@ body.layout-content-navbar .layout-page .layout-navbar {
 .kpi-progress{ height:4px; border-radius:9999px; background:#e5e7eb; }
 .dark .kpi-progress{ background:#334155; }
 .kpi-progress > span{ display:block; height:100%; background:#6366f1; border-radius:9999px; transition:width .3s ease; }
+
+/* ==== End of HR Box enhancements ==== */
+/* Standar kartu HC seragam */
+.hc-card{
+  @apply tw-rounded-2xl tw-border tw-border-gray-200 tw-bg-white tw-px-4 tw-pt-4 tw-pb-4 tw-flex tw-flex-col tw-overflow-hidden;
+  min-height:180px; /* Sesuaikan dengan tinggi kartu statistik lain */
+}
+
+/* Header kartu standar (abu / biru) */
+.hc-card-header{
+  @apply tw-flex tw-items-start tw-justify-between tw-mb-3;
+}
+
+.hc-card-title{
+  @apply tw-text-xs tw-font-semibold tw-tracking-wide;
+}
+
+/* Varian header biru penuh */
+.hc-card-header-blue{
+  @apply tw-rounded-t-2xl tw-mx-[-1rem] tw-mt-[-1rem] tw-mb-3 tw-px-5 tw-py-2.5 tw-flex tw-items-center tw-justify-between;
+  background:linear-gradient(90deg,#0053D9 0%,#0038A8 100%);
+}
+
+/* Area konten yang bisa tumbuh */
+.hc-card-body{
+  @apply tw-flex-1 tw-flex tw-flex-col tw-overflow-hidden;
+}
+
+/* Grid tile talentmap di mode compact */
+.hc-talentmap-grid{
+  @apply tw-flex tw-flex-wrap;
+  margin-left:-6px;
+  margin-right:-6px;
+}
+
+.hc-talentmap-item{
+  padding:6px;
+}
+
+/* Scroll internal tipis jika konten lebih tinggi dari container */
+.hc-scroll{
+  scrollbar-width:thin;
+}
+.hc-scroll::-webkit-scrollbar{
+  width:6px;
+  height:6px;
+}
+.hc-scroll::-webkit-scrollbar-thumb{
+  background:#c4c4c4;
+  border-radius:3px;
+}

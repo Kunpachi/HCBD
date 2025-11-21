@@ -12,25 +12,40 @@ Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-// Route::get('/total', [HRTablesController::class, 'total'])->name('total');
-//     Route::get('/gender', [HRTablesController::class, 'gender'])->name('gender');
-//     Route::get('/gap', [HRTablesController::class, 'gap'])->name('gap');
-//     Route::get('/generation', [HRTablesController::class, 'generation'])->name('generation');
 
 
-// Route::get('/', fn() => redirect()->route('users.index'))->name('dashboard');
-// Route::get('/analytics', fn() => view('demo.analytics'))->name('analytics');
-// Route::get('/crm', fn() => view('demo.crm'))->name('crm');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.perform');
+});
 
 
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', function () {
-        auth()->logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
-        return redirect()->route('login');
-    })->name('logout');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Logout via controller
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Contoh users (kalau memang hanya untuk user login)
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+    // HR prefix (jika butuh proteksi login, taruh di dalam group auth)
+    Route::prefix('hr')->name('hr.')->group(function () {
+        Route::get('/total', [HRTablesController::class, 'total'])->name('total');
+        Route::get('/gender', [HRTablesController::class, 'gender'])->name('gender');
+        Route::get('/gap', [HRTablesController::class, 'gap'])->name('gap');
+        Route::get('/generation', [HRTablesController::class, 'generation'])->name('generation');
+        Route::get('/education', [HRTablesController::class, 'education'])->name('education');
+    });
 });
+
+// Route::middleware('auth')->group(function () {
+//     Route::post('/logout', function () {
+//         auth()->logout();
+//         request()->session()->invalidate();
+//         request()->session()->regenerateToken();
+//         return redirect()->route('login');
+//     })->name('logout');
+// });
 
 Route::prefix('hr')->name('hr.')->group(function () {
     Route::get('/total', [HRTablesController::class, 'total'])->name('total');
