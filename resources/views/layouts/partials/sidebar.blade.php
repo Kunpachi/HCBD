@@ -20,8 +20,8 @@
     <ul class="menu-inner py-1">
         <!-- Dashboards --> 
 
-        <li class="menu-item {{ request()->routeIs('users.index') ? 'active' : '' }}">
-            <a href="{{ route('users.index') }}" class="menu-link">
+        <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <a href="{{ route('dashboard') }}" class="menu-link">
                 <i class="menu-icon ti ti-users"></i>
                 <div data-i18n="Laravel Example">User Management</div>
             </a>

@@ -5,30 +5,50 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HRTablesController;
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-Route::get('/users', [UserController::class, 'index'])->name('users.index');
+use App\Http\Controllers\ImportController;
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+| Struktur:
+| - Guest: login & perform login
+| - Auth: dashboard, import, HR metrics, logout
+| - Root: redirect ke dashboard (akan dialihkan ke login oleh middleware jika belum auth)
+|--------------------------------------------------------------------------
+*/
 
+// ROOT: arahkan ke dashboard (middleware auth akan mengarahkan ke login bila belum masuk)
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+})->name('root');
 
+// Guest (belum login)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.perform');
 });
 
-
+// Authenticated area
 Route::middleware('auth')->group(function () {
+
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    // Logout via controller
+
+    // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Contoh users (kalau memang hanya untuk user login)
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    // Users (aktifkan jika perlu)
+    // Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
-    // HR prefix (jika butuh proteksi login, taruh di dalam group auth)
+    // Import Pegawai
+    Route::get('/import/pegawai', [ImportController::class, 'form'])->name('import.pegawai.form');
+    // Route::post('/import/pegawai', [ImportController::class, 'pegawaiMasterImport'])->name('import.pegawai.import');
+    Route::post('/import/pegawai', [ImportController::class, 'import'])->name('import.pegawai.import');
+    // Jika method real di controller bernama import(), ubah baris POST:
+    // Route::post('/import/pegawai', [ImportController::class, 'import'])->name('import.pegawai.import');
+
+    // HR endpoints (prefix hr)
     Route::prefix('hr')->name('hr.')->group(function () {
         Route::get('/total', [HRTablesController::class, 'total'])->name('total');
         Route::get('/gender', [HRTablesController::class, 'gender'])->name('gender');
@@ -37,52 +57,3 @@ Route::middleware('auth')->group(function () {
         Route::get('/education', [HRTablesController::class, 'education'])->name('education');
     });
 });
-
-// Route::middleware('auth')->group(function () {
-//     Route::post('/logout', function () {
-//         auth()->logout();
-//         request()->session()->invalidate();
-//         request()->session()->regenerateToken();
-//         return redirect()->route('login');
-//     })->name('logout');
-// });
-
-Route::prefix('hr')->name('hr.')->group(function () {
-    Route::get('/total', [HRTablesController::class, 'total'])->name('total');
-    Route::get('/gender', [HRTablesController::class, 'gender'])->name('gender');
-    Route::get('/gap', [HRTablesController::class, 'gap'])->name('gap');
-    Route::get('/generation', [HRTablesController::class, 'generation'])->name('generation');
-    Route::get('/education', [HRTablesController::class, 'education'])->name('education');
-});
-
-
-// Route::get('/users', function () {
-//     // Contoh dummy array
-//     $users = [
-//         ['id'=>1,'name'=>'John Doe','email'=>'johndoe@user.com','verified'=>false],
-//         ['id'=>2,'name'=>'Hilda Rocha','email'=>'poqueqoxy@mailinator.com','verified'=>false],
-//         ['id'=>3,'name'=>'Guest','email'=>'guest@guest.com','verified'=>false],
-//     ];
-//     return view('users.index', compact('users'));
-// })->name('users.index');
-
-
-// Route::middleware('guest')->group(function () {
-//     Route::get('/login', [\App\Http\Controllers\Auth\AuthController::class, 'showLogin'])->name('login');
-//     Route::post('/login', [\App\Http\Controllers\Auth\AuthController::class, 'login'])->name('login.perform');
-// });
-
-// Route::middleware('auth')->group(function () {
-//     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-//     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-//     // contoh route users
-//     Route::get('/users', function () {
-//         $users = [
-//             ['id'=>1,'name'=>'John Doe','email'=>'johndoe@user.com','verified'=>false],
-//             ['id'=>2,'name'=>'Hilda Rocha','email'=>'poqueqoxy@mailinator.com','verified'=>false],
-//             ['id'=>3,'name'=>'Guest','email'=>'guest@guest.com','verified'=>false],
-//         ];
-//         return view('users.index', compact('users'));
-//     })->name('users.index');
-// });
