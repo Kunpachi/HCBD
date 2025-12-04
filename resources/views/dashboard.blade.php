@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title','Dashboard')
 @section('content')
+
 @php
   $totalEmployees   = $totalEmployees   ?? 0;
   $totalTalent      = $totalTalent      ?? 0;
@@ -27,22 +28,30 @@
 @endif
 
 <div class="row g-4 mb-4">
-  <div class="col-12 col-xl-4 d-flex">
-    <x-hr-box-total :totalEmployees="$totalEmployees" :totalTalent="$totalTalent"
-                    :totalDisability="$totalDisability" :totalPct="$totalPct"
-                    :talentPct="$talentPct" :disabilityPct="$disabilityPct"
-                    :updatedAt="now()" class="tw-w-full"/>
+  <div class="col-12 col-xl-6 d-flex">
+    <x-hc-consolidated-inner-card
+      :formasi="$formasiConsolidated ?? 0"
+      :jumlahPegawai="$jumlahConsolidated ?? 0"
+      :gap="($gapConsolidated ?? null)"      {{-- null = otomatis formasi - jumlah --}}
+      :gapPct="($gapPctConsolidated ?? null)"{{-- null = otomatis (gap/formasi)*100 --}}
+      :updatedAt="now()"
+      class="tw-w-full"
+    />
   </div>
-  <div class="col-12 col-xl-4 d-flex">
-    <x-hr-box-gender :male="$male" :female="$female"
-                     :malePct="$malePct" :femalePct="$femalePct"
-                     :totalEmployees="$totalEmployees" :updatedAt="now()" class="tw-w-full"/>
-  </div>
-  <div class="col-12 col-xl-4 d-flex">
-    <x-hr-box-gap :male="$male" :female="$female" :totalEmployees="$totalEmployees"
-                  :updatedAt="now()" class="tw-w-full"/>
+  <div class="col-12 col-xl-6 d-flex">
+     <x-hc-hcbd-consolidated-only-inner-card
+      :formasi="$formasiHCBD ?? 0"
+      :jumlahPegawai="$jumlahHCBD ?? 0"
+      :gap="($gapHCBD ?? null)"
+      :gapPct="($gapPctHCBD ?? null)"
+      :male="$maleHCBD ?? 0"
+      :female="$femaleHCBD ?? 0"
+      :updatedAt="now()"
+      class="tw-w-full"
+    />
   </div>
 </div>
+
 
 <div class="row g-4 mb-4">
   <div class="col-12 col-xl-6 d-flex">
@@ -71,14 +80,19 @@
       columns="3"
       class="tw-w-full"
     /> --}}
-    <x-hr-retirement-legacy-card
-      chartId="retirement-chart"
-      :years="$retirementYears ?? ['2025','2026','2027','2028','2029']"
-      :series="$retirementSeries ?? [43,222,248,231,238]"
+    <x-hr-talentmap-legacy-card
+      :noData="$tmNoData ?? 0"
+      :totalTalentmap="$tmTotal ?? 3251"
+      :percentTalentmap="$tmPercent ?? '25,53%'"
+      :tiles="$tmTiles ?? null"
       :updatedAt="now()"
-      chartHeight="140"
+      contentMaxWidth="470"
+      tileWidth="145"
+      tileHeight="74"
+      columns="3"
       class="tw-w-full"
     />
+   
   </div>
   <div class="col-12 col-xl-6 d-flex">
     <x-hr-person-grade-legacy-card
@@ -92,9 +106,9 @@
   </div>
 </div>
 
-{{-- <div class="row g-4 mb-5">
+<div class="row g-4 mb-5">
   <div class="col-12 col-xl-6 d-flex">
-    <x-hr-retirement-legacy-card
+   <x-hr-retirement-legacy-card
       chartId="retirement-chart"
       :years="$retirementYears ?? ['2025','2026','2027','2028','2029']"
       :series="$retirementSeries ?? [43,222,248,231,238]"
@@ -102,17 +116,55 @@
       chartHeight="140"
       class="tw-w-full"
     />
-  </div> --}}
+  </div> 
 
-  {{-- <div class="col-12 col-xl-6 d-flex">
-    <x-hr-retirement-legacy-card
-      chartId="retirement-chart"
-      :years="$retirementYears ?? ['2025','2026','2027','2028','2029']"
-      :series="$retirementSeries ?? [43,222,248,231,238]"
+   <div class="col-12 col-xl-6 d-flex">
+     <x-hr-assessment-year-card
+      chartId="assessment-year-chart"
+      :years="$assessmentYears ?? ['2018','2019','2020','2021','2022','2023','2024','2025']"
+      :series="$assessmentSeries ?? [3,3,9,947,690,996,4769,1565]"
       :updatedAt="now()"
       chartHeight="140"
       class="tw-w-full"
     />
-  </div> --}}
-{{-- </div> --}}
+  </div>
+  
+</div>
+
+<div class="row g-4 mb-5">
+  <div class="col-12 d-flex">
+    {{-- <x-hr-soccer-field-card
+      :row="[
+        'field' => 'Grand Total',
+        'target' => '100%',
+        'totalEmployees' => $sfTotal ?? 12852,
+        'pctField' => '100%',
+        'pctGapField' => ($sfGapPct ?? '-1,0%'),
+        'gapPegawai' => ($sfGapCount ?? 125),
+      ]"
+      :updatedAt="now()"
+      class="tw-w-full"
+    /> --}}
+    <x-hr-soccer-field-card
+      :rows="[
+        ['name'=>'Sales','target'=>'21%','totalEmployees'=>2574,'pctField'=>'20,0%','pctGapField'=>'-1,0%','gapPegawai'=>125],
+        ['name'=>'Bisnis Non Sales','target'=>'30%','totalEmployees'=>3952,'pctField'=>'30,8%','pctGapField'=>'0,8%','gapPegawai'=>-97],
+        ['name'=>'IT & Digital','target'=>'3%','totalEmployees'=>371,'pctField'=>'2,9%','pctGapField'=>'-0,1%','gapPegawai'=>15],
+        ['name'=>'Operations','target'=>'34%','totalEmployees'=>4630,'pctField'=>'36,0%','pctGapField'=>'2,0%','gapPegawai'=>-261],
+        ['name'=>'Shared Service','target'=>'12%','totalEmployees'=>1325,'pctField'=>'10,3%','pctGapField'=>'-1,7%','gapPegawai'=>218],
+      ]"
+      :grandTotal="[
+        'target'=>'100%',
+        'totalEmployees'=>12852,
+        'pctField'=>'100%',
+        'pctGapField'=>'0,0%',
+        'gapPegawai'=>125-97+15-261+218, // contoh perhitungan
+      ]"
+      :updatedAt="now()"
+      class="tw-w-full"
+    />
+  </div>
+                              
+
+</div>
 @endsection

@@ -160,4 +160,53 @@ class HRTablesController extends Controller
 
         return view('hr.pendidikan', compact('bachelor','master','doctorate'));
     }
+
+     public function fulfillment(Request $request)
+    {
+        // Data contoh; ganti dengan query nyata Anda
+        $formasi = 0;           // total formasi rencana
+        $jumlahPegawai = 0;     // headcount aktual
+        $gap = $formasi - $jumlahPegawai;
+        $gapPct = $formasi > 0 ? round(($gap / $formasi) * 100, 1).'%' : '0%';
+
+        // Jika Anda sudah punya breakdown per department/lokasi, kirimkan juga.
+        $breakdown = [
+            // ['name'=>'Sales','formasi'=>2000,'aktual'=>1800,'gap'=>200,'gapPct'=>'10.0%'],
+        ];
+
+        return view('hr.fulfillment', compact('formasi','jumlahPegawai','gap','gapPct','breakdown'));
+    }
+
+    public function jobtitle()
+    {
+        // Data contoh (silakan ganti dari DB/Service Anda)
+        $cards = [
+            [
+                'title' => 'PRIORITY',
+                'pct' => 92.5,
+                'year' => 2025,
+                'formasi' => 293,
+                'include' => ['jmlPeg' => 271, 'gap' => -22, 'gapPct' => 92.5],
+                'exclude' => ['jmlPeg' => 271, 'gap' => -22, 'gapPct' => 92.5],
+            ],
+            [
+                'title' => 'SME',
+                'pct' => 102.6,
+                'year' => 2025,
+                'formasi' => 454,
+                'include' => ['jmlPeg' => 466, 'gap' => 12, 'gapPct' => 102.6],
+                'exclude' => ['jmlPeg' => 466, 'gap' => 12, 'gapPct' => 102.6],
+            ],
+            [
+                'title' => 'Consumer',
+                'pct' => 98.6,
+                'year' => 2025,
+                'formasi' => 882,
+                'include' => ['jmlPeg' => 870, 'gap' => -12, 'gapPct' => 98.6],
+                'exclude' => ['jmlPeg' => 870, 'gap' => -12, 'gapPct' => 98.6],
+            ],
+        ];
+
+        return view('hr.jobtitle', compact('cards'));
+    }
 }

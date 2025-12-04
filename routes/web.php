@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HRTablesController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\JobTitleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,7 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 })->name('root');
 
+//Route::get('/import', [ImportController::class,'form'])->name('import.show');
 // Guest (belum login)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -42,6 +44,7 @@ Route::middleware('auth')->group(function () {
     // Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
     // Import Pegawai
+    Route::get('/import', [ImportController::class,'form'])->name('import.show');
     Route::get('/import/pegawai', [ImportController::class, 'form'])->name('import.pegawai.form');
     // Route::post('/import/pegawai', [ImportController::class, 'pegawaiMasterImport'])->name('import.pegawai.import');
     Route::post('/import/pegawai', [ImportController::class, 'import'])->name('import.pegawai.import');
@@ -54,6 +57,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/gender', [HRTablesController::class, 'gender'])->name('gender');
         Route::get('/gap', [HRTablesController::class, 'gap'])->name('gap');
         Route::get('/generation', [HRTablesController::class, 'generation'])->name('generation');
-        Route::get('/education', [HRTablesController::class, 'education'])->name('education');
+        Route::get('/education', [HRTablesController::class, 'education'])->name(   'education');
+        Route::get('/fulfillment', [HRTablesController::class, 'fulfillment'])->name('fulfillment');
+        Route::get('/jobtitle', [HRTablesController::class, 'jobtitle'])->name('jobtitle');
     });
 });
+
+

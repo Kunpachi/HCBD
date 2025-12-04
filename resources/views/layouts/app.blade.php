@@ -21,6 +21,13 @@
 <div class="layout-container">
     @include('layouts.partials.sidebar')
     {{-- @include('dashboard-section.import-excel') --}}
+    {{-- @include('dashboard-section.employees-explorer', [
+      'employees' => $employees ?? [],
+      'direktorats' => $direktorats ?? [],
+      'departments' => $departments ?? [],
+      'locations' => $locations ?? [],
+      'families' => $families ?? [],
+    ]) --}}
 
     <!-- Layout page -->
     <div class="layout-page">
